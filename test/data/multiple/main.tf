@@ -1,7 +1,7 @@
 # -------------------------------------------------------
 # TECHNOGIX
 # -------------------------------------------------------
-# Copyright (c) [2021] Technogix.io
+# Copyright (c) [2022] Technogix SARL
 # All rights reserved
 # -------------------------------------------------------
 # Simple deployment for module testing
@@ -24,7 +24,9 @@ locals {
 		]}
 	]
 	test_gateways = [
-		{ 	service = "s3", type = "gateway"}
+		{ 	service = "s3", type = "gateway", rights = [
+			{ description = "AllowPutObject" , actions = [ "s3:PutObject"] , resources = [ "${aws_s3_bucket.access.arn}", "${aws_s3_bucket.access.arn}/*"], principal = { aws = ["arn:aws:iam::${var.account}:user/${var.service_principal}"] } }
+		]}
 	]
 }
 
@@ -58,26 +60,41 @@ resource "aws_subnet" "test" {
 }
 
 # -------------------------------------------------------
+# Create an s3 bucket
+# -------------------------------------------------------
+resource "random_string" "random" {
+	length		= 32
+	special		= false
+	upper 		= false
+}
+resource "aws_s3_bucket" "access" {
+	bucket = random_string.random.result
+}
+
+# -------------------------------------------------------
 # Create gateways using the current module
 # -------------------------------------------------------
 module "gateways" {
 
 	count 		= length(local.test_gateways)
 
-	source 		= "../../../"
-	region		= "eu-west-1"
-	email 		= "moi.moi@moi.fr"
-	project 	= "test"
-	environment = "test"
-	module 		= "test"
-	git_version = "test"
-	vpc 		= {
+	source 		      = "../../../"
+	region		      = "eu-west-1"
+	email 		      = "moi.moi@moi.fr"
+	project 	      = "test"
+	environment       = "test"
+	module 		      = "test"
+	git_version       = "test"
+	account		      = var.account
+	service_principal = var.service_principal
+	vpc 		      = {
 		id 		= aws_vpc.test.id
 		route 	= aws_default_route_table.test.id
 	}
-	service		= local.test_gateways[count.index].service
-	type 		= local.test_gateways[count.index].type
-	links 		=  []
+	service		      = local.test_gateways[count.index].service
+	type 		      = local.test_gateways[count.index].type
+	links 		      = []
+	rights	          = local.test_gateways[count.index].rights
 }
 
 # -------------------------------------------------------
@@ -85,23 +102,25 @@ module "gateways" {
 # -------------------------------------------------------
 module "interfaces" {
 
-	count 		= length(local.test_interfaces)
+	count 		      = length(local.test_interfaces)
 
-	source 		= "../../../"
-	region		= "eu-west-1"
-	email 		= "moi.moi@moi.fr"
-	project 	= "test"
-	environment = "test"
-	module 		= "test"
-	git_version = "test"
-	vpc 		= {
+	source 		      = "../../../"
+	region		      = "eu-west-1"
+	email 		      = "moi.moi@moi.fr"
+	project 	      = "test"
+	environment       = "test"
+	module 		      = "test"
+	git_version       = "test"
+	account		      = var.account
+	service_principal = var.service_principal
+	vpc 		      = {
 		id 		= aws_vpc.test.id
 		route 	= aws_default_route_table.test.id
 	}
-	subnets 	= [aws_subnet.test.id]
-	service		= local.test_interfaces[count.index].service
-	type 		= local.test_interfaces[count.index].type
-	links 		= local.test_interfaces[count.index].links
+	subnets 	      = [aws_subnet.test.id]
+	service		      = local.test_interfaces[count.index].service
+	type 		      = local.test_interfaces[count.index].type
+	links 		      = local.test_interfaces[count.index].links
 }
 
 # -------------------------------------------------------
@@ -124,6 +143,12 @@ terraform {
 # Region for this deployment
 # -------------------------------------------------------
 variable "region" {
+	type    = string
+}
+variable "account" {
+	type    = string
+}
+variable "service_principal" {
 	type    = string
 }
 

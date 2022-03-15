@@ -1,10 +1,10 @@
 # -------------------------------------------------------
 # TECHNOGIX
 # -------------------------------------------------------
-# Copyright (c) [2021] Technogix.io
+# Copyright (c) [2022] Technogix SARL
 # All rights reserved
 # -------------------------------------------------------
-# Module to deploy an aws service endpoint in a VPC with 
+# Module to deploy an aws service endpoint in a VPC with
 # all the secure components required
 # -------------------------------------------------------
 # Nadège LEMPERIERE, @12 november 2021

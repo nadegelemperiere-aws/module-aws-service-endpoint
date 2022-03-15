@@ -1,15 +1,19 @@
 # -------------------------------------------------------
-# TECHNOGIX 
+# TECHNOGIX
 # -------------------------------------------------------
-# Copyright (c) [2021] Technogix.io
-# All rights reserved 
+# Copyright (c) [2022] Technogix SARL
+# All rights reserved
 # -------------------------------------------------------
-# Module to deploy an aws service endpoint in a VPC with 
+# Module to deploy an aws service endpoint in a VPC with
 # all the secure components required
 # -------------------------------------------------------
 # Nadège LEMPERIERE, @12 november 2021
 # Latest revision: 12 november 2021
 # -------------------------------------------------------
+
+terraform {
+	experiments = [ module_variable_optional_attrs ]
+}
 
 # -------------------------------------------------------
 # Contact e-mail for this deployment
@@ -57,7 +61,7 @@ variable "service" {
 }
 
 # --------------------------------------------------------
-# Endpoint network (subnet only for gateways, so get crapy 
+# Endpoint network (subnet only for gateways, so get crapy
 # default values that should never be used)
 # --------------------------------------------------------
 variable "vpc" {
@@ -69,7 +73,7 @@ variable "vpc" {
 
 variable "subnets" {
 	type = list(string)
-	default = [] 
+	default = []
 }
 
 # --------------------------------------------------------
@@ -83,4 +87,27 @@ variable "links" {
 		prefixes	= list(string)
 	}))
 	default = []
+}
+
+# --------------------------------------------------------
+# Endpoint access rights + Service principal and account
+# to ensure root and service principal can access
+# --------------------------------------------------------
+variable "rights" {
+	type = list(object({
+		description = string,
+		actions 	= list(string)
+		principal 	= object({
+			aws 		= optional(list(string))
+		})
+		resources   = list(string)
+		condition   = optional(string)
+	}))
+	default = null
+}
+variable "service_principal" {
+	type = string
+}
+variable "account" {
+	type = string
 }

@@ -63,25 +63,37 @@ To use this module in a wider terraform deployment, add the module to a terrafor
 
     module "group" {
 
-        source      = "git::https://github.com/technogix-terraform/module-aws-service-endpoint?ref=<this module version"
-        project     = the project to which the permission set belongs to be used in naming and tags
-        module      = the project module to which the permission set belongs to be used in naming and tags
-        email       = the email of the person responsible for the permission set maintainance
-        environment = the type of environment to which the permission set contributes (prod, preprod, staging, sandbox, ...) to be used in naming and tags
-        git_version = the version of the deployment that uses the permission sets to be used as tag
-        type        = Type of the service to create : gateway or interface
-        service     = Name of the service to create
-        vpc         = {
+        source            = "git::https://github.com/technogix-terraform/module-aws-service-endpoint?ref=<this module version"
+        project           = the project to which the permission set belongs to be used in naming and tags
+        module            = the project module to which the permission set belongs to be used in naming and tags
+        email             = the email of the person responsible for the permission set maintainance
+        environment       = the type of environment to which the permission set contributes (prod, preprod, staging, sandbox, ...) to be used in naming and tags
+        git_version       = the version of the deployment that uses the permission sets to be used as tag
+        account           = AWS account to allow access to root user by default
+        service_principal = technical IAM account used for automation that shall be able to access the endpoint
+        type              = Type of the service to create : gateway or interface
+        service           = Name of the service to create
+        vpc               = {
             id       = the aws id of the virtual private cloud in which the endpoint shall be deployed
             route    = the aws id of the vpc route table to associate with the endpoint
         }
-        subnet      = the id of the  in which the interfaces shall be deployed
-        links       = [ list of the flows to allow access to the endpoint
+        subnet            = the id of the  in which the interfaces shall be deployed
+        links             = [ list of the flows to allow access to the endpoint
             {
                 service    = type of the service to interface in vpc
                 protocol   = protocol of the flow
                 port       = port used by the flow
                 prefixes	= list of the prefixes to which the service needs to have access to
+            }
+        ]
+        rights            = [ List of rules describing allowed endpoint access
+           {
+                description = Name of the set of rules, type AllowSomebodyToDoSomething
+                actions     = [ List of allowed s3 actions, like "s3:PutObject" for example, depending on the endpoint associated service ]
+                principal   = {
+                    aws            = [ list of roles and/or iam users that are allowed endpoint access ]
+                    services       = [ List of AWS services that are allowed endpoint access ]
+                }
             }
         ]
     }

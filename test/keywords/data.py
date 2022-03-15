@@ -1,8 +1,8 @@
 # -------------------------------------------------------
-# TECHNOGIX 
+# TECHNOGIX
 # -------------------------------------------------------
-# Copyright (c) [2021] Technogix.io
-# All rights reserved 
+# Copyright (c) [2022] Technogix SARL
+# All rights reserved
 # -------------------------------------------------------
 # Keywords to create data for module test
 # -------------------------------------------------------
@@ -24,7 +24,7 @@ from ipaddress import IPv4Network
 
 @keyword('Load Multiple Test Data')
 def load_multiple_test_data(vpc, route, subnet, gateways, interfaces) :
-    
+
     result = {}
     result['endpoints'] = []
     result['security_groups'] = []
@@ -50,7 +50,7 @@ def load_multiple_test_data(vpc, route, subnet, gateways, interfaces) :
         endpoint['data']['Tags'].append({'Key'          : 'Environment' , 'Value' : 'test'})
         endpoint['data']['Tags'].append({'Key'          : 'Owner'       , 'Value' : 'moi.moi@moi.fr'})
         endpoint['data']['Tags'].append({'Key'          : 'Name'        , 'Value' : 'test.test.test.vpc.gateway.' + gateways['service'][index]})
-        
+
         if gateways['service'][index] == 's3' : s3_prefix = gateways['prefix'][index]
 
         result['endpoints'].append(endpoint)
@@ -75,7 +75,7 @@ def load_multiple_test_data(vpc, route, subnet, gateways, interfaces) :
         endpoint['data']['Tags'].append({'Key'          : 'Environment' , 'Value' : 'test'})
         endpoint['data']['Tags'].append({'Key'          : 'Owner'       , 'Value' : 'moi.moi@moi.fr'})
         endpoint['data']['Tags'].append({'Key'          : 'Name'        , 'Value' : 'test.test.test.vpc.interface.' + interfaces['service'][index]})
-        
+
         result['endpoints'].append(endpoint)
 
         group = {}
@@ -94,7 +94,7 @@ def load_multiple_test_data(vpc, route, subnet, gateways, interfaces) :
         group['data']['Tags'].append({'Key'          : 'Environment' , 'Value' : 'test'})
         group['data']['Tags'].append({'Key'          : 'Owner'       , 'Value' : 'moi.moi@moi.fr'})
         group['data']['Tags'].append({'Key'          : 'Name'        , 'Value' : 'test.test.test.vpc.interface.' + interfaces['service'][index] + '.nsg'})
-      
+
         result['security_groups'].append(group)
 
         logger.debug(dumps(result))
@@ -104,7 +104,7 @@ def load_multiple_test_data(vpc, route, subnet, gateways, interfaces) :
 
 @keyword('Load Subnets Test Data')
 def load_subnets_test_data(vpc, route, subnets, interface) :
-    
+
     result = {}
     result['endpoints'] = []
     result['security_groups'] = []
@@ -130,7 +130,7 @@ def load_subnets_test_data(vpc, route, subnets, interface) :
     endpoint['data']['Tags'].append({'Key'          : 'Environment' , 'Value' : 'test'})
     endpoint['data']['Tags'].append({'Key'          : 'Owner'       , 'Value' : 'moi.moi@moi.fr'})
     endpoint['data']['Tags'].append({'Key'          : 'Name'        , 'Value' : 'test.test.test.vpc.interface.' + interface['service']})
-    
+
     result['endpoints'].append(endpoint)
 
     group = {}
@@ -148,7 +148,7 @@ def load_subnets_test_data(vpc, route, subnets, interface) :
     group['data']['Tags'].append({'Key'          : 'Environment' , 'Value' : 'test'})
     group['data']['Tags'].append({'Key'          : 'Owner'       , 'Value' : 'moi.moi@moi.fr'})
     group['data']['Tags'].append({'Key'          : 'Name'        , 'Value' : 'test.test.test.vpc.interface.' + interface['service'] + '.nsg'})
-    
+
     result['security_groups'].append(group)
 
     logger.debug(dumps(result))

@@ -1,7 +1,7 @@
 # -------------------------------------------------------
 # TECHNOGIX
 # -------------------------------------------------------
-# Copyright (c) [2021] Technogix.io
+# Copyright (c) [2022] Technogix SARL
 # All rights reserved
 # -------------------------------------------------------
 # Simple deployment for module testing
@@ -51,21 +51,23 @@ resource "aws_subnet" "test2" {
 # -------------------------------------------------------
 module "interface" {
 
-	source 		= "../../../"
-	region		= "eu-west-1"
-	email 		= "moi.moi@moi.fr"
-	project 	= "test"
-	environment = "test"
-	module 		= "test"
-	git_version = "test"
-	vpc 		= {
+	source 		      = "../../../"
+	region		      = "eu-west-1"
+	email 		      = "moi.moi@moi.fr"
+	project 	      = "test"
+	environment       = "test"
+	module 		      = "test"
+	git_version       = "test"
+	account		      = var.account
+	service_principal = var.service_principal
+	vpc 		      = {
 		id 		= aws_vpc.test.id
 		route 	= aws_default_route_table.test.id
 	}
-	subnets     = [aws_subnet.test1.id, aws_subnet.test2.id]
-	service		= "cloudtrail"
-	type 		= "interface"
-	links 		= []
+	subnets           = [aws_subnet.test1.id, aws_subnet.test2.id]
+	service		      = "cloudtrail"
+	type 		      = "interface"
+	links 		      = []
 }
 
 # -------------------------------------------------------
@@ -88,6 +90,12 @@ terraform {
 # Region for this deployment
 # -------------------------------------------------------
 variable "region" {
+	type    = string
+}
+variable "account" {
+	type    = string
+}
+variable "service_principal" {
 	type    = string
 }
 
