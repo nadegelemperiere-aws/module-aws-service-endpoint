@@ -103,7 +103,7 @@ variable "rights" {
 		resources   = list(string)
 		condition   = optional(string)
 	}))
-	default = null
+	default = []
 }
 variable "service_principal" {
 	type = string

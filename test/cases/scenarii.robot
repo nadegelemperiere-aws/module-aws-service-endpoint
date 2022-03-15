@@ -49,7 +49,7 @@ Create Multiple Endpoints
     Security Group Shall Exist And Match        ${specs['security_groups']}
     [Teardown]  Destroy Terraform Deployment    ${CURDIR}/../data/multiple  ${TF_PARAMETERS}
 
- Create Multiple Subnets Endpoint
+Create Multiple Subnets Endpoint
     [Documentation]         Create Interface In Multiple Subnets And Check That The AWS Infrastructure Match Specifications
     Launch Terraform Deployment                 ${CURDIR}/../data/subnets  ${TF_PARAMETERS}
     ${states}   Load Terraform States           ${CURDIR}/../data/subnets

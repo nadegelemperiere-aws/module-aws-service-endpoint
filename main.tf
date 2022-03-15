@@ -46,7 +46,7 @@ locals {
 			}
 			Action 		= right.actions
 			Resource 	= right.resources
-			Condition	= ((right.condition != null) ? jsondecode(right.condition) : null)
+			Condition	= ((right.condition != null) ? jsondecode("${right.condition}") : {})
 		}
 	],
 	[
@@ -63,7 +63,8 @@ locals {
 }
 
 # -------------------------------------------------------
-# Associate endpoint to policy
+# Associate endpoint to policy (some endpoint only accept
+# full access policy)
 # -------------------------------------------------------
 resource "aws_vpc_endpoint_policy" "endpoint" {
 
