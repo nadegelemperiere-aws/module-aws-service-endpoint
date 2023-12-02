@@ -1,7 +1,5 @@
 # -------------------------------------------------------
-# TECHNOGIX
-# -------------------------------------------------------
-# Copyright (c) [2022] Technogix SARL
+# Copyright (c) [2022] Nadege Lemperiere
 # All rights reserved
 # -------------------------------------------------------
 # Module to deploy an aws service endpoint in a VPC with
@@ -32,5 +30,5 @@ output "cidr" {
 }
 
 output "nsg" {
-    value = ("${var.type}" == "interface") ? aws_security_group.interface[0].id : ""
+    value = (var.type == "interface") ? aws_security_group.interface[0].id : ""
 }

@@ -1,7 +1,5 @@
 # -------------------------------------------------------
-# TECHNOGIX
-# -------------------------------------------------------
-# Copyright (c) [2022] Technogix SARL
+# Copyright (c) [2022] Nadege Lemperiere
 # All rights reserved
 # -------------------------------------------------------
 # Module to deploy an aws service endpoint in a VPC with
@@ -18,9 +16,9 @@ resource "aws_vpc_endpoint" "endpoint" {
 
 	vpc_id      	 	= var.vpc.id
   	service_name 		= "com.amazonaws.${var.region}.${var.service}"
-	vpc_endpoint_type 	= ("${var.type}" == "gateway") ? "Gateway" : "Interface"
-	security_group_ids	= ("${var.type}" == "gateway") ? [] : [aws_security_group.interface[0].id]
-	private_dns_enabled = ("${var.type}" == "gateway") ? false : true
+	vpc_endpoint_type 	= (var.type == "gateway") ? "Gateway" : "Interface"
+	security_group_ids	= (var.type == "gateway") ? [] : [aws_security_group.interface[0].id]
+	private_dns_enabled = (var.type == "gateway") ? false : true
 
 	tags = {
 		Name           	= "${var.project}.${var.environment}.${var.module}.vpc.${var.type}.${var.service}"
@@ -46,7 +44,7 @@ locals {
 			}
 			Action 		= right.actions
 			Resource 	= right.resources
-			Condition	= ((right.condition != null) ? jsondecode("${right.condition}") : {})
+			Condition	= ((right.condition != null) ? jsondecode(right.condition) : {})
 		}
 	],
 	[
@@ -68,12 +66,12 @@ locals {
 # -------------------------------------------------------
 resource "aws_vpc_endpoint_policy" "endpoint" {
 
-	count 	= (("${var.type}" == "gateway") || ("${var.service}" == "s3") || ("${var.service}" == "dynamodb")) ? 1 : 0
+	count 	= ((var.type == "gateway") || (var.service == "s3") || (var.service == "dynamodb")) ? 1 : 0
 
   	vpc_endpoint_id = aws_vpc_endpoint.endpoint.id
   	policy = jsonencode({
     	Version = "2012-10-17"
-		Statement = "${local.endpoint_statements}"
+		Statement = local.endpoint_statements
 	})
 }
 
@@ -83,7 +81,7 @@ resource "aws_vpc_endpoint_policy" "endpoint" {
 # -------------------------------------------------------
 resource "aws_vpc_endpoint_route_table_association" "gateway" {
 
-	count 			= ("${var.type}" == "gateway") ? 1 : 0
+	count 			= (var.type == "gateway") ? 1 : 0
 	route_table_id 	= var.vpc.route
 	vpc_endpoint_id = aws_vpc_endpoint.endpoint.id
 }
@@ -93,7 +91,7 @@ resource "aws_vpc_endpoint_route_table_association" "gateway" {
 # -------------------------------------------------------
 resource "aws_security_group" "interface" {
 
-  	count 		= ("${var.type}" == "interface") ? 1 : 0
+  	count 		= (var.type == "interface") ? 1 : 0
 
 	name        = "${var.project}-vpc-interface-${var.service}"
 	description = "Security group for endpoint ${var.service}"
@@ -125,7 +123,7 @@ resource "aws_security_group" "interface" {
 # -------------------------------------------------------
 resource "aws_vpc_endpoint_subnet_association" "interface" {
 
-	count 		= ("${var.type}" == "interface") ? length(var.subnets) : 0
+	count 		= (var.type == "interface") ? length(var.subnets) : 0
 
 	vpc_endpoint_id	= aws_vpc_endpoint.endpoint.id
   	subnet_id       = var.subnets[count.index]
